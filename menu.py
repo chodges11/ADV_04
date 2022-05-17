@@ -3,9 +3,10 @@ Provides a basic frontend
 """
 # pylint: disable = import-error
 
-import main
-from loguru import logger
 import sys
+from loguru import logger
+import main
+import socialnetwork_model as sm
 
 
 def load_users():
@@ -154,19 +155,23 @@ def _status_generator(user_status):
     """
     Prints a User's statuses.
     """
-
-    choice = ' '
+    logger.info("start status generator")
+    counter = 0
+    choice = input(
+        "Would you like to see the next update? (Y/N): ").lower().strip()
     while choice == "y":
-        choice = input(
-            "Would you like to see the next update? (Y/N): ").lower().strip()
+        import pdb; pdb.set_trace()
         try:
-            for status_text in user_status:
-                print(status_text)
+            for sm.Status.status_text in user_status.select():
+                print(sm.Status.status_text)
+                counter += 1
 
         except StopIteration as error:
             print("INFO: You have reached the last status update.")
             logger.info(f"{type(error)}: {error}")
             break
+        choice = input(
+            "Would you like to see the next update? (Y/N): ").lower().strip()
 
 
 def quit_program():
