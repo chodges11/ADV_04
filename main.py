@@ -29,7 +29,7 @@ def load_users(filename):
     Opens a CSV file with user data and adds it to a DB.
     """
     logger.info("Start Load Users")
-    sm.db.connect()
+    sm.db.connect(reuse_if_open=True)
     users = []
     try:
         with open(filename, 'r') as read_obj:
@@ -64,7 +64,7 @@ def load_status_updates(filename):
     Opens a CSV file with status data and adds it to a DB.
     """
     logger.info("Start Load Status")
-    sm.db.connect()
+    sm.db.connect(reuse_if_open=True)
     status = []
     try:
         with open(filename, 'r') as read_obj:
@@ -247,3 +247,20 @@ def search_status(status_id):
     except pw.DoesNotExist as error:
         logger.info(f"{type(error)}: {error}")
         return None
+
+
+def search_all_status_updates(user_id):
+    """Takes a user ID and returns all status updates for that user."""
+
+    with sm.db:
+        sm.db.connect(reuse_if_open=True)
+        status_amount = sm.Status.select().where(
+            sm.Status.user_id == user_id).count()
+        query = sm.Status.select().where(sm.Status.user_id == user_id)
+
+        logger.info('Count and collect statuses by User')
+
+    # Print explanatory statement.
+    print(f"\nA total {status_amount} status updates found for {user_id}\n")
+
+    return query

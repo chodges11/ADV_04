@@ -3,8 +3,9 @@ Provides a basic frontend
 """
 # pylint: disable = import-error
 
-import sys
 import main
+from loguru import logger
+import sys
 
 
 def load_users():
@@ -136,6 +137,38 @@ def delete_status():
         print("Status was successfully deleted")
 
 
+def search_all_status_updates():
+    """
+    Searches for a user in the database, and prints their statuses.
+    """
+    user_id = input('Enter user ID to search: ')
+    result = main.search_user(user_id)
+    if result is None:
+        print("ERROR: User does not exist")
+    else:
+        user_status = main.search_all_status_updates(user_id)
+        _status_generator(user_status)
+
+
+def _status_generator(user_status):
+    """
+    Prints a User's statuses.
+    """
+
+    choice = ' '
+    while choice == "y":
+        choice = input(
+            "Would you like to see the next update? (Y/N): ").lower().strip()
+        try:
+            for status_text in user_status:
+                print(status_text)
+
+        except StopIteration as error:
+            print("INFO: You have reached the last status update.")
+            logger.info(f"{type(error)}: {error}")
+            break
+
+
 def quit_program():
     """
     Quits program
@@ -156,6 +189,7 @@ if __name__ == '__main__':
         'H': update_status,
         'I': search_status,
         'J': delete_status,
+        'K': search_all_status_updates,
         'Q': quit_program
     }
     while True:
@@ -170,6 +204,7 @@ if __name__ == '__main__':
                             H: Update status
                             I: Search status
                             J: Delete status
+                            K: Search for all Status Updates from one User
                             Q: Quit
 
                             Please enter your choice: """)
