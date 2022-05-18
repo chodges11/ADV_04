@@ -158,13 +158,13 @@ def filter_status_by_string():
 
     content = input('\nEnter word or phrase to search for: ')
     filtered_status = main.filter_status_by_string(content)
-    ifs = iter(filtered_status)
+    new_filtered_status = iter(filtered_status)
     filter_choice = input(
         "Would you like to see the next update? (Y/N): ").lower().strip()
 
     while filter_choice == "y":
         try:
-            next_status = next(ifs)
+            next_status = next(new_filtered_status)
             print(f"{next_status[1]}")
 
         except (StopIteration, IndexError) as error:
@@ -191,7 +191,6 @@ def _status_generator(user_statuses):
         "Would you like to see the next update? (Y/N): ").lower().strip()
     while choice == "y":
         try:
-            # My first ever list comprehension. Neat!
             status_list = [status.status_text for status in user_statuses]
             print(status_list[counter])
             counter += 1
@@ -202,6 +201,19 @@ def _status_generator(user_statuses):
             break
         choice = input(
             "Would you like to see the next update? (Y/N): ").lower().strip()
+
+
+def flagged_status_updates():
+    """
+    Searches for a word or phrase in the database, and prints all the status
+    IDs and associated statuses, containing that word/phrase.
+    """
+    logger.info("flagged status updates")
+
+    content = input('\nEnter word or phrase to search for: ')
+    filtered_status = main.filter_status_by_string(content)
+    for item in filtered_status:
+        print(item)
 
 
 def quit_program():
@@ -226,6 +238,7 @@ if __name__ == '__main__':
         'J': delete_status,
         'K': search_all_status_updates,
         'L': filter_status_by_string,
+        'M': flagged_status_updates,
         'Q': quit_program
     }
     while True:
@@ -242,6 +255,7 @@ if __name__ == '__main__':
                             J: Delete status
                             K: Search for all Status Updates from one User
                             L: Search all status updates matching a string
+                            M: Show all flagged status updates
                             Q: Quit
 
                             Please enter your choice: """)
