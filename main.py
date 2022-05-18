@@ -284,6 +284,7 @@ def filter_status_by_string(content):
             sm.Status.status_text
         ).where(sm.Status.status_text.contains(content))
 
-        filtered = [status.status_text for status in query]
+        filtered = {status.status_id: status.status_text for status in query}
+        filtered = list(filtered.items())
 
     return filtered

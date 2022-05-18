@@ -161,17 +161,19 @@ def filter_status_by_string():
     ifs = iter(filtered_status)
     filter_choice = input(
         "Would you like to see the next update? (Y/N): ").lower().strip()
+
     while filter_choice == "y":
         try:
-            print(f"{next(ifs)}")
+            next_status = next(ifs)
+            print(f"{next_status[1]}")
 
-        except StopIteration as error:
+        except (StopIteration, IndexError) as error:
             print("INFO: You have reached the last status update.")
             logger.info(f"{type(error)}: {error}")
             break
         remove_status = input("Delete this status? (Y / N): ")
         if remove_status == 'y':
-            main.delete_status(next_result.status_id)
+            main.delete_status(next_status[0])
             print("Status deleted per your request.")
         else:
             print("Status not deleted, per your request.")
