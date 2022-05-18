@@ -269,3 +269,15 @@ def search_all_status_updates(user_id):
     print(f"\nA total {status_amount} status updates found for {user_id}\n")
 
     return query
+
+
+def filter_status_by_string(content):
+    """
+    Searches for a word or phrase in the database, and prints it, as requested.
+    """
+    query = sm.Status.select(
+        sm.Status.status_id,
+        sm.Status.user_id,
+        sm.Status.status_text
+    ).where(sm.Status.status_text.contains(content)).iterator()
+    yield query

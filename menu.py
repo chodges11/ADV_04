@@ -6,7 +6,6 @@ Provides a basic frontend
 import sys
 from loguru import logger
 import main
-import socialnetwork_model as sm
 
 
 def load_users():
@@ -151,6 +150,35 @@ def search_all_status_updates():
         _status_generator(user_status)
 
 
+def filter_status_by_string():
+    """
+    Searches for a word or phrase in the database, and prints it, as requested.
+    """
+    logger.info("filter status by string iterator")
+
+    content = input('\nEnter word or phrase to search for: ')
+    filter_status = main.filter_status_by_string(content)
+    next_result = next(filter_status)
+    filter_choice = input(
+        "Would you like to see the next update? (Y/N): ").lower().strip()
+    while filter_choice == "y":
+        try:
+            print(f"{next_result.status_text}")
+
+        except StopIteration as error:
+            print("INFO: You have reached the last status update.")
+            logger.info(f"{type(error)}: {error}")
+            break
+        remove_status = input("Delete this status? (Y / N): ")
+        if remove_status == 'y':
+            main.delete_status(next_result.status_id)
+            print("Status deleted per your request.")
+        else:
+            print("Status not deleted, per your request.")
+        choice = input(
+            "Would you like to see the next update? (Y/N): ").lower().strip()
+
+
 def _status_generator(user_status):
     """
     Prints a User's statuses.
@@ -195,6 +223,7 @@ if __name__ == '__main__':
         'I': search_status,
         'J': delete_status,
         'K': search_all_status_updates,
+        'L': filter_status_by_string,
         'Q': quit_program
     }
     while True:
@@ -210,6 +239,7 @@ if __name__ == '__main__':
                             I: Search status
                             J: Delete status
                             K: Search for all Status Updates from one User
+                            L: Filter Statuses by User Entered Word or Phrase
                             Q: Quit
 
                             Please enter your choice: """)
