@@ -254,10 +254,14 @@ def search_all_status_updates(user_id):
 
     with sm.db:
         sm.db.connect(reuse_if_open=True)
+
+        # DB query for the count of status updates per a specific user.
         status_amount = sm.Status.select().where(
             sm.Status.user_id == user_id).count()
-        query = sm.Status.select().join(sm.Users).where(
-                sm.Status.user_id == user_id)
+
+        # DB query for the actual status updates per a specified user.
+        query = sm.Status.select(sm.Status.user_id, sm.Status.status_text).\
+            where(sm.Status.user_id == user_id)
 
         logger.info('Count and collect statuses by User')
 
