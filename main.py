@@ -251,7 +251,6 @@ def search_status(status_id):
 
 def search_all_status_updates(user_id):
     """Takes a user ID and returns all status updates for that user."""
-
     with sm.db:
         sm.db.connect(reuse_if_open=True)
 
@@ -260,8 +259,10 @@ def search_all_status_updates(user_id):
             sm.Status.user_id == user_id).count()
 
         # DB query for the actual status updates per a specified user.
-        query = sm.Status.select(sm.Status.user_id, sm.Status.status_text).\
-            where(sm.Status.user_id == user_id)
+        query = sm.Status.select(
+            sm.Status.user_id,
+            sm.Status.status_text
+        ).where(sm.Status.user_id == user_id)
 
         logger.info('Count and collect statuses by User')
 
@@ -273,11 +274,16 @@ def search_all_status_updates(user_id):
 
 def filter_status_by_string(content):
     """
-    Searches for a word or phrase in the database, and prints it, as requested.
+    Searches for a word or phrase in the database.
     """
-    query = sm.Status.select(
-        sm.Status.status_id,
-        sm.Status.user_id,
-        sm.Status.status_text
-    ).where(sm.Status.status_text.contains(content)).iterator()
-    yield query
+    with sm.db:
+        sm.db.connect(reuse_if_open=True)
+        query = sm.Status.select(
+            sm.Status.status_id,
+            sm.Status.user_id,
+            sm.Status.status_text
+        ).where(sm.Status.status_text.contains(content))
+
+        filtered = [status.status_text for status in query]
+
+    return filtered

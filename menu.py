@@ -146,8 +146,8 @@ def search_all_status_updates():
     if result is None:
         print("ERROR: User does not exist")
     else:
-        user_status = main.search_all_status_updates(user_id)
-        _status_generator(user_status)
+        user_statuses = main.search_all_status_updates(user_id)
+        _status_generator(user_statuses)
 
 
 def filter_status_by_string():
@@ -157,13 +157,13 @@ def filter_status_by_string():
     logger.info("filter status by string iterator")
 
     content = input('\nEnter word or phrase to search for: ')
-    filter_status = main.filter_status_by_string(content)
-    next_result = next(filter_status)
+    filtered_status = main.filter_status_by_string(content)
+    ifs = iter(filtered_status)
     filter_choice = input(
         "Would you like to see the next update? (Y/N): ").lower().strip()
     while filter_choice == "y":
         try:
-            print(f"{next_result.status_text}")
+            print(f"{next(ifs)}")
 
         except StopIteration as error:
             print("INFO: You have reached the last status update.")
@@ -175,11 +175,11 @@ def filter_status_by_string():
             print("Status deleted per your request.")
         else:
             print("Status not deleted, per your request.")
-        choice = input(
+        filter_choice = input(
             "Would you like to see the next update? (Y/N): ").lower().strip()
 
 
-def _status_generator(user_status):
+def _status_generator(user_statuses):
     """
     Prints a User's statuses.
     """
@@ -190,7 +190,7 @@ def _status_generator(user_status):
     while choice == "y":
         try:
             # My first ever list comprehension. Neat!
-            status_list = [status.status_text for status in user_status]
+            status_list = [status.status_text for status in user_statuses]
             print(status_list[counter])
             counter += 1
 
@@ -239,7 +239,7 @@ if __name__ == '__main__':
                             I: Search status
                             J: Delete status
                             K: Search for all Status Updates from one User
-                            L: Filter Statuses by User Entered Word or Phrase
+                            L: Search all status updates matching a string
                             Q: Quit
 
                             Please enter your choice: """)
