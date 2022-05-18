@@ -272,6 +272,7 @@ def search_all_status_updates(user_id):
     return query
 
 
+# pylint: disable = not-an-iterable
 def filter_status_by_string(content):
     """
     Searches for a word or phrase in the database.
